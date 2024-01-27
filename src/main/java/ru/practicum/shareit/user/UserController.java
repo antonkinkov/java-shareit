@@ -19,9 +19,9 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping
-        public List<UserDto> getAllUsers() {
-            log.info("Получен запрос на получение всех пользователей");
-            return userService.getAllUsers();
+    public List<UserDto> getAllUser() {
+        log.info("Получен запрос на получение всех пользователей");
+        return userService.getAllUsers();
     }
 
     @GetMapping("/{id}")
