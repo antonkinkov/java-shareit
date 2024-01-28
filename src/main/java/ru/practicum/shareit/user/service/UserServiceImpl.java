@@ -27,7 +27,7 @@ public class UserServiceImpl implements UserService {
     public List<UserDto> getAllUsers() {
         log.info("Список всех пользователей успешно отправлен");
         List<UserDto> users = new ArrayList<>();
-        for (User user : userRepository.findAll()) {
+        for (User user : userRepository.getAll()) {
             users.add(toUserDto(user));
         }
         return users;
@@ -52,15 +52,16 @@ public class UserServiceImpl implements UserService {
             return UserMapper.toUserDto(userRepository.updateUser(userId, UserMapper.toUser(userDto)));
         }
         if (userDto.getEmail() != null) {
-            return UserMapper.toUserDto(userRepository.updateUserFieldEmail(userId, UserMapper.toUser(userDto)));
+            validateForExistEmail(userId, userDto);
+            return UserMapper.toUserDto(userRepository.updateUserEmail(userId, UserMapper.toUser(userDto)));
         }
-        return UserMapper.toUserDto(userRepository.updateUserFieldName(userId, UserMapper.toUser(userDto)));
+        return UserMapper.toUserDto(userRepository.updateUserName(userId, UserMapper.toUser(userDto)));
     }
 
     @Override
-    public void deleteUserById(long userId) {
+    public boolean deleteUserById(long userId) {
         validateFoundForUser(userId);
-        userRepository.deleteUserById(userId);
+        return userRepository.deleteUserById(userId);
     }
 
     private void validateByUser(UserDto userDto) {
@@ -79,6 +80,12 @@ public class UserServiceImpl implements UserService {
         if (userRepository.getUserEmailRepository().containsKey(userDto.getEmail())) {
             log.info("Пользователь с таким email = {} уже существует", userDto.getEmail());
             throw new ErrorException("Пользователь с таким email уже существует");
+        }
+    }
+    private void validateForExistEmail(long userId, UserDto userDto) {
+        if (userRepository.getUserEmailRepository().containsKey(userDto.getEmail())) {
+            if (userRepository.getUserEmailRepository().get(userDto.getEmail()).getId() != userId)
+                throw new ErrorException("Пользователь с таким email уже существует");
         }
     }
 
