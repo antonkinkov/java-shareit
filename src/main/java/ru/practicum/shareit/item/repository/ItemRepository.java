@@ -7,22 +7,13 @@ import java.util.List;
 import java.util.Map;
 
 public interface ItemRepository {
-    public Map<Long, List<Long>> getItemRepositoryByOwner();
-    public Map<Long, Item> getItemRepository();
 
     Item getById(Long itemId);
 
     Item create(Long userId, Item item);
 
-    Collection<Item> getAll();
+    List<Item> getAll();
 
-    Item updateName(Item item, Long itemId);
-
-    Item updateDescription(Item item, Long itemId);
-
-    Item updateAvailable(Item item, Long itemId);
-
-    Item updateItem(Item itemDto, long itemId);
-
+    Item updateItem(Item item, long userId);
     Collection<Item> search(String text);
 }

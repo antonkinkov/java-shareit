@@ -13,6 +13,7 @@ import ru.practicum.shareit.user.repository.UserRepository;
 import javax.validation.ValidationException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static ru.practicum.shareit.user.UserMapper.*;
 
@@ -48,14 +49,17 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto updateUser(long userId, UserDto userDto) {
         validateFoundForUser(userId);
-        if (userDto.getEmail() != null && userDto.getName() != null) {
-            return UserMapper.toUserDto(userRepository.updateUser(userId, UserMapper.toUser(userDto)));
+        User user = userRepository.getUserById(userId);
+
+        if(Objects.nonNull(userDto.getEmail()) && !user.getEmail().equals(userDto.getEmail())){
+            validateEmailUniq(userDto.getEmail());
         }
-        if (userDto.getEmail() != null) {
-            validateForExistEmail(userId, userDto);
-            return UserMapper.toUserDto(userRepository.updateUserEmail(userId, UserMapper.toUser(userDto)));
-        }
-        return UserMapper.toUserDto(userRepository.updateUserName(userId, UserMapper.toUser(userDto)));
+
+        user.setName(Objects.requireNonNullElse(userDto.getName(), user.getName()));
+        user.setEmail(Objects.requireNonNullElse(userDto.getEmail(), user.getEmail()));
+
+        user.setId(userId);
+        return UserMapper.toUserDto(userRepository.updateUser(userId, user));
     }
 
     @Override
@@ -69,7 +73,7 @@ public class UserServiceImpl implements UserService {
             log.info("Отсутствует поле name у пользователя = {}", userDto.getName());
             throw new ValidationException("Отсутствует поле name у пользователя");
         }
-        if (userDto.getEmail().isBlank() || userDto.getEmail() == null) {
+        if (userDto.getEmail() == null ||  userDto.getEmail().isBlank()) {
             log.info("Отсутствует поле email у пользователя = {}", userDto.getName());
             throw new ValidationException("Отсутствует поле email у пользователя");
         }
@@ -77,22 +81,20 @@ public class UserServiceImpl implements UserService {
             log.info("Пользователь неверно ввел email = {}", userDto.getEmail());
             throw new ValidationException("Неверный формат email");
         }
-        if (userRepository.getUserEmailRepository().containsKey(userDto.getEmail())) {
-            log.info("Пользователь с таким email = {} уже существует", userDto.getEmail());
-            throw new ErrorException("Пользователь с таким email уже существует");
-        }
-    }
-    private void validateForExistEmail(long userId, UserDto userDto) {
-        if (userRepository.getUserEmailRepository().containsKey(userDto.getEmail())) {
-            if (userRepository.getUserEmailRepository().get(userDto.getEmail()).getId() != userId)
-                throw new ErrorException("Пользователь с таким email уже существует");
-        }
+        validateEmailUniq(userDto.getEmail());
     }
 
     private void validateFoundForUser(long userId) {
-        if (!userRepository.getUserRepository().containsKey(userId)) {
+        if (userRepository.getUserById(userId) == null) {
             log.info("Пользователь с id = {} не найден", userId);
             throw new NotFoundException("Пользователь не найден");
+        }
+    }
+
+    private void validateEmailUniq(String email){
+        if (!userRepository.validateEmailUniq(email)) {
+            log.info("Пользователь с таким email = {} уже существует", email);
+            throw new ErrorException("Пользователь с таким email уже существует");
         }
     }
 }

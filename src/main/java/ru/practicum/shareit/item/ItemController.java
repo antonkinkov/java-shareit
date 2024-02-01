@@ -27,9 +27,9 @@ public class ItemController {
     }
 
     @GetMapping
-        public List<ItemDto> getAll (@RequestHeader Long userId) {
-            log.info("Получен запрос на получение списка вещей владельца с id = {}", userId);
-            return itemService.getAll(userId);
+    public List<ItemDto> getAll(@RequestHeader("X-Sharer-User-Id") Long userId) {
+        log.info("Получен запрос на получение списка вещей владельца с id = {}", userId);
+        return itemService.getAll(userId);
     }
 
     @PostMapping()
@@ -40,13 +40,12 @@ public class ItemController {
     }
 
 
-
     @PatchMapping("/{itemId}")
-        public ItemDto updateItem (@RequestHeader("X-Sharer-User-Id") Long id,
-                                   @RequestBody ItemDto itemDto,
-                                   @PathVariable Long userId) {
-            log.info("Получен запрос на получение обновления вещи с id = {}", id);
-            return itemService.updateItem(id,itemDto,userId);
+    public ItemDto updateItem(@RequestHeader("X-Sharer-User-Id") Long userId,
+                              @RequestBody ItemDto itemDto,
+                              @PathVariable Long itemId) {
+        log.info("Получен запрос на получение обновления вещи с id = {}", itemId);
+        return itemService.updateItem(itemId, itemDto, userId);
     }
 
     @GetMapping("/search")

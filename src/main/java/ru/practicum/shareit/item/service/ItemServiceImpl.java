@@ -53,19 +53,18 @@ public class ItemServiceImpl implements ItemService{
         validateByItem(itemDto);
         validateFindItem(itemId);
         validateFindUser(userId);
-        validateFindOwner(userId, itemId);
 
         if (itemDto.getDescription() != null && itemDto.getName() != null) {
             return ItemMapper.toItemDto(itemRepository.updateItem(ItemMapper.toItem(itemDto), itemId));
         }
         if (itemDto.getDescription() != null) {
-            return ItemMapper.toItemDto(itemRepository.updateDescription(ItemMapper.toItem(itemDto), itemId));
+            return ItemMapper.toItemDto(itemRepository.updateItem(ItemMapper.toItem(itemDto), itemId));
         }
         if (itemDto.getName() != null) {
-            return ItemMapper.toItemDto(itemRepository.updateName(ItemMapper.toItem(itemDto), itemId));
+            return ItemMapper.toItemDto(itemRepository.updateItem(ItemMapper.toItem(itemDto), itemId));
         }
         if (itemDto.getAvailable() != null) {
-            return ItemMapper.toItemDto(itemRepository.updateAvailable(ItemMapper.toItem(itemDto), itemId));
+            return ItemMapper.toItemDto(itemRepository.updateItem(ItemMapper.toItem(itemDto), itemId));
         }
         return itemDto;
     }
@@ -95,25 +94,16 @@ public class ItemServiceImpl implements ItemService{
     }
 
     private void validateFindItem(long itemId) {
-        if (!itemRepository.getItemRepository().containsKey(itemId)) {
+        if (itemRepository.getById(itemId) == null) {
             log.info("Вещь с id = {} не найдена", itemId);
             throw new NotFoundException("Вещь с таким id не найдена");
         }
     }
 
     private void validateFindUser(long userId) {
-        if (!userRepository.getUserRepository().containsKey(userId)) {
+        if (userRepository.getUserById(userId) == null) {
             log.info("Пользователь с id = {} не найден", userId);
             throw new NotFoundException("Пользователь с таким id не найден");
-        }
-    }
-
-    private void validateFindOwner(long userId, long itemId) {
-        if (!itemRepository.getItemRepositoryByOwner().containsKey(userId)) {
-            throw new NotFoundException("У пользователя с id = " + userId + " нет вещи с id = " + itemId);
-        }
-        if (!itemRepository.getItemRepositoryByOwner().get(userId).contains(itemId)) {
-            throw new NotFoundException("У пользователя с id = " + userId + " нет вещи с id = " + itemId);
         }
     }
 }

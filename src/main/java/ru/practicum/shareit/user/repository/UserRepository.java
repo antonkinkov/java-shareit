@@ -6,14 +6,7 @@ import java.util.*;
 
 public interface UserRepository {
 
-
-    User updateUserEmail(long userId, User user);
-
-    User updateUserName(long userId, User user);
-
-    Map<Long, User> getUserRepository();
-
-    Collection<User> getAll();
+    List<User> getAll();
 
     User getUserById(long userId);
 
@@ -23,5 +16,5 @@ public interface UserRepository {
 
     User updateUser(long userId, User user);
 
-    Map<String, User> getUserEmailRepository();
+    boolean validateEmailUniq(String email);
 }

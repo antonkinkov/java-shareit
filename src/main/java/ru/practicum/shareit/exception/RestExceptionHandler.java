@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import javax.validation.ValidationException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,6 +25,19 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         logger.debug(ex.getMessage());
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
+    @ExceptionHandler({NotFoundException.class})
+    protected ResponseEntity<Object> handleNotFoundEx(NotFoundException ex, WebRequest request) {
+        ApiError error = new ApiError("Объект не найден", ex.getMessage());
+        logger.debug(ex.getMessage());
+        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler({ValidationException.class})
+    protected ResponseEntity<Object> handleValidationEx(ValidationException ex, WebRequest request) {
+        ApiError error = new ApiError("Объект не прошел валидацию", ex.getMessage());
+        logger.debug(ex.getMessage());
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
 
     @ExceptionHandler({BadRequestException.class})
     protected ResponseEntity<Object> handleBadRequestExceptionEx(BadRequestException ex,
@@ -32,6 +46,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         logger.debug(ex.getMessage());
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
+
 
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
