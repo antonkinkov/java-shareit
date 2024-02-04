@@ -15,8 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static ru.practicum.shareit.user.UserMapper.toUserDto;
-
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -30,9 +28,9 @@ public class UserServiceImpl implements UserService {
         List<UserDto> users = new ArrayList<>();
 
         for (User user : userRepository.getAll()) {
-            users.add(toUserDto(user));
+            users.add(UserMapper.toUserDto(user));
         }
-        
+
         return users;
     }
 
