@@ -3,7 +3,6 @@ package ru.practicum.shareit.item.repository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.user.model.User;
 
 
 import java.util.*;
@@ -21,7 +20,7 @@ public class ItemRepositoryImpl implements ItemRepository {
         return items.get(itemId);
     }
     @Override
-    public Item create(Long userId, Item item) {
+    public Item create(Item item) {
         item.setId(id++);
         items.put(item.getId(), item);
         return item;
@@ -42,11 +41,39 @@ public class ItemRepositoryImpl implements ItemRepository {
     }
 
     @Override
-    public Item updateItem(Item item, long userId) {
-        items.put(userId, item);
-        log.info("Поле name у пользователя с id = {} обновлено", userId);
-        return items.get(userId);
+    public boolean validateDescriptionUniq(String description) {
+        List<String> descriptions = items.values()
+                .stream()
+                .map(Item::getDescription)
+                .filter(userDescription -> userDescription.equals(description))
+                .collect(Collectors.toList());
+        return descriptions.isEmpty();
+    }
+
+    @Override
+    public boolean validateAvailableUniq(boolean available) {
+        List<Boolean> availables = items.values()
+                .stream()
+                .map(Item::getAvailable)
+                .filter(userAvailable -> userAvailable.equals(available))
+                .collect(Collectors.toList());
+        return availables.isEmpty();
     }
 
 
+   @Override
+    public boolean validateNameUniq(String name) {
+        List<String> names = items.values()
+                .stream()
+                .map(Item::getName)
+                .filter(userName -> userName.equals(name))
+                .collect(Collectors.toList());
+        return names.isEmpty();
+    }
+    @Override
+    public Item updateItem(Item item, long userId) {
+        items.put(userId, item);
+        log.info("Поле name у пользователя с id = {} обновлено", userId);
+        return item;
+    }
 }

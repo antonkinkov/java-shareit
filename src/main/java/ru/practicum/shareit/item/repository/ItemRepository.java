@@ -10,10 +10,16 @@ public interface ItemRepository {
 
     Item getById(Long itemId);
 
-    Item create(Long userId, Item item);
+    Item create(Item item);
 
     List<Item> getAll();
 
     Item updateItem(Item item, long userId);
     Collection<Item> search(String text);
+
+    boolean validateDescriptionUniq(String description);
+
+    boolean validateAvailableUniq(boolean available);
+
+    boolean validateNameUniq(String name);
 }

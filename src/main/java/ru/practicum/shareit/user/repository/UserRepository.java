@@ -1,5 +1,6 @@
 package ru.practicum.shareit.user.repository;
 
+import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
 
 import java.util.*;
@@ -17,4 +18,5 @@ public interface UserRepository {
     User updateUser(long userId, User user);
 
     boolean validateEmailUniq(String email);
+
 }

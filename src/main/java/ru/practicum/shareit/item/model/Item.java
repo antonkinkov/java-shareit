@@ -24,4 +24,5 @@ public class Item {
     @NotNull
     private Boolean available;
     private String request;
+
 }
