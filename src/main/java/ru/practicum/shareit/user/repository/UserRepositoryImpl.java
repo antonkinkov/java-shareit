@@ -4,15 +4,18 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.practicum.shareit.user.model.User;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Component
 @Slf4j
 public class UserRepositoryImpl implements UserRepository {
 
-    private long id = 1;
     private final Map<Long, User> users = new HashMap<>();
+    private long id = 1;
 
     @Override
     public List<User> getAll() {

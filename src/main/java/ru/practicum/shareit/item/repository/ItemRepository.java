@@ -4,7 +4,6 @@ import ru.practicum.shareit.item.model.Item;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 public interface ItemRepository {
 
@@ -15,6 +14,7 @@ public interface ItemRepository {
     List<Item> getAll();
 
     Item updateItem(Item item, long userId);
+
     Collection<Item> search(String text);
 
     boolean validateDescriptionUniq(String description);

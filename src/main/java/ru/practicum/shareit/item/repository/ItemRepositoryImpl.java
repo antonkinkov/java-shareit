@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.practicum.shareit.item.model.Item;
 
-
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -12,13 +11,14 @@ import java.util.stream.Collectors;
 @Component
 public class ItemRepositoryImpl implements ItemRepository {
 
-    private long id = 1;
     private final Map<Long, Item> items = new HashMap<>();
+    private long id = 1;
 
     @Override
     public Item getById(Long itemId) {
         return items.get(itemId);
     }
+
     @Override
     public Item create(Item item) {
         item.setId(id++);
@@ -61,7 +61,7 @@ public class ItemRepositoryImpl implements ItemRepository {
     }
 
 
-   @Override
+    @Override
     public boolean validateNameUniq(String name) {
         List<String> names = items.values()
                 .stream()
@@ -70,6 +70,7 @@ public class ItemRepositoryImpl implements ItemRepository {
                 .collect(Collectors.toList());
         return names.isEmpty();
     }
+
     @Override
     public Item updateItem(Item item, long userId) {
         items.put(userId, item);

@@ -17,7 +17,7 @@ public class ItemMapper {
                 .build();
     }
 
-   public static Item toItem (ItemDto itemDto, User user) {
+    public static Item toItem(ItemDto itemDto, User user) {
         return Item
                 .builder()
                 .id(itemDto.getId())
@@ -27,5 +27,5 @@ public class ItemMapper {
                 .available(itemDto.getAvailable())
                 .request(itemDto.getRequest())
                 .build();
-   }
+    }
 }

@@ -21,9 +21,9 @@ public class ItemController {
     private final ItemService itemService;
 
     @GetMapping("/{itemId}")
-        public ItemDto getById(@PathVariable Long itemId) {
-            log.info("Получен запрос на поиск вещи с id = {}", itemId);
-            return itemService.getById(itemId);
+    public ItemDto getById(@PathVariable Long itemId) {
+        log.info("Получен запрос на поиск вещи с id = {}", itemId);
+        return itemService.getById(itemId);
     }
 
     @GetMapping
@@ -34,7 +34,7 @@ public class ItemController {
 
     @PostMapping()
     public ItemDto create(@RequestHeader("X-Sharer-User-Id") Long userId,
-                              @RequestBody ItemDto itemDto) {
+                          @RequestBody ItemDto itemDto) {
         log.info("Получен запрос на добавление вещи для пользователя с id = {}", userId);
         return itemService.create(userId, itemDto);
     }
@@ -49,8 +49,8 @@ public class ItemController {
     }
 
     @GetMapping("/search")
-        public Collection<Item> search (@RequestParam String text) {
-            log.info("Получен запрос на поиск вещи в аренду для пользователя с id = {}");
-            return itemService.search(text);
+    public Collection<Item> search(@RequestParam String text) {
+        log.info("Получен запрос на поиск вещи в аренду для пользователя с id = {}");
+        return itemService.search(text);
     }
 }

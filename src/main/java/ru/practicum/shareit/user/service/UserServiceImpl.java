@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static ru.practicum.shareit.user.UserMapper.*;
+import static ru.practicum.shareit.user.UserMapper.toUserDto;
 
 @Service
 @Slf4j
@@ -51,7 +51,7 @@ public class UserServiceImpl implements UserService {
         validateFoundForUser(userId);
         User user = userRepository.getUserById(userId);
 
-        if(Objects.nonNull(userDto.getEmail()) && !user.getEmail().equals(userDto.getEmail())){
+        if (Objects.nonNull(userDto.getEmail()) && !user.getEmail().equals(userDto.getEmail())) {
             validateEmailUniq(userDto.getEmail());
         }
 
@@ -73,7 +73,7 @@ public class UserServiceImpl implements UserService {
             log.info("Отсутствует поле name у пользователя = {}", userDto.getName());
             throw new ValidationException("Отсутствует поле name у пользователя");
         }
-        if (userDto.getEmail() == null ||  userDto.getEmail().isBlank()) {
+        if (userDto.getEmail() == null || userDto.getEmail().isBlank()) {
             log.info("Отсутствует поле email у пользователя = {}", userDto.getName());
             throw new ValidationException("Отсутствует поле email у пользователя");
         }
@@ -91,7 +91,7 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    private void validateEmailUniq(String email){
+    private void validateEmailUniq(String email) {
         if (!userRepository.validateEmailUniq(email)) {
             log.info("Пользователь с таким email = {} уже существует", email);
             throw new ErrorException("Пользователь с таким email уже существует");

@@ -25,6 +25,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         logger.debug(ex.getMessage());
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
+
     @ExceptionHandler({NotFoundException.class})
     protected ResponseEntity<Object> handleNotFoundEx(NotFoundException ex, WebRequest request) {
         ApiError error = new ApiError("Объект не найден", ex.getMessage());
