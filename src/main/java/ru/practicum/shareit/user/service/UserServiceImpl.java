@@ -28,9 +28,11 @@ public class UserServiceImpl implements UserService {
     public List<UserDto> getAllUsers() {
         log.info("Список всех пользователей успешно отправлен");
         List<UserDto> users = new ArrayList<>();
+
         for (User user : userRepository.getAll()) {
             users.add(toUserDto(user));
         }
+        
         return users;
     }
 
