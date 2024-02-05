@@ -7,7 +7,6 @@ import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.service.ItemService;
 
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -49,7 +48,7 @@ public class ItemController {
     }
 
     @GetMapping("/search")
-    public Collection<Item> search(@RequestParam String text) {
+    public List<Item> search(@RequestParam String text) {
         log.info("Получен запрос на поиск вещи в аренду для пользователя с id = {}");
         return itemService.search(text);
     }

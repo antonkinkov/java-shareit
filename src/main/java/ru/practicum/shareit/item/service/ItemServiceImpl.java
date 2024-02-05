@@ -8,13 +8,12 @@ import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.ItemMapper;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.item.repository.ItemRepositoryImpl;
+import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.model.User;
-import ru.practicum.shareit.user.repository.UserRepositoryImpl;
+import ru.practicum.shareit.user.repository.UserRepository;
 
 import javax.validation.ValidationException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
@@ -24,8 +23,8 @@ import static ru.practicum.shareit.item.ItemMapper.toItemDto;
 @Slf4j
 @RequiredArgsConstructor
 public class ItemServiceImpl implements ItemService {
-    private final ItemRepositoryImpl itemRepository;
-    private final UserRepositoryImpl userRepository;
+    private final ItemRepository itemRepository;
+    private final UserRepository userRepository;
 
 
     @Override
@@ -71,11 +70,11 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public Collection<Item> search(String text) {
+    public List<Item> search(String text) {
         if (text == null || text.isEmpty()) {
             return new ArrayList<>();
         }
-        Collection<Item> items = itemRepository.search(text);
+        List<Item> items = itemRepository.search(text);
         return items;
     }
 

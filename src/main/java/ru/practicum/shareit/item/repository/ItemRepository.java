@@ -1,10 +1,11 @@
 package ru.practicum.shareit.item.repository;
 
+import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.item.model.Item;
 
-import java.util.Collection;
 import java.util.List;
 
+@Repository
 public interface ItemRepository {
 
     Item getById(Long itemId);
@@ -15,7 +16,7 @@ public interface ItemRepository {
 
     Item updateItem(Item item, long userId);
 
-    Collection<Item> search(String text);
+    List<Item> search(String text);
 
     boolean validateDescriptionUniq(String description);
 
