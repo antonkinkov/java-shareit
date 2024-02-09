@@ -47,10 +47,25 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemDto create(Long userId, ItemDto itemDto) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("Пользователь с таким id не найден: " + userId));
+
         User user = validateFindForUser(userId);
         validateByItem(itemDto);
         return toItemDto(itemRepository.create(ItemMapper.toItem(itemDto, user)));
     }
+    /*
+     @Override
+    public ItemDto create(ItemDto itemDto, Long userId) {
+        User itemOwner = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("Пользователь не найден с id: " + userId));
+
+        Item item = itemMapper.toEntity(itemDto);
+        item.setOwner(itemOwner);
+
+        return itemMapper.toDto(itemRepository.save(item));
+    }
+     */
 
     @Override
     public ItemDto updateItem(Long itemId, ItemDto itemDto, Long userId) {
@@ -103,7 +118,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     private User validateFindForUser(long userId) {
-        User user = userRepository.getUserById(userId);
+        User user = userRepository.getById(userId);
         if (user == null) {
             log.info("Пользователь с id = {} не найден", userId);
             throw new NotFoundException("Пользователь с таким id не найден");

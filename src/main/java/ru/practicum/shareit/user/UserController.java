@@ -22,19 +22,19 @@ public class UserController {
     @GetMapping
     public List<UserDto> getAllUser() {
         log.info("Получен запрос на получение всех пользователей");
-        return userService.getAllUsers();
+        return userService.getAll();
     }
 
     @GetMapping("/{userId}")
     public UserDto getUserById(@PathVariable Long userId) {
         log.info("Получен запрос на получение пользователя");
-        return userService.getUserById(userId);
+        return userService.getById(userId);
     }
 
     @PostMapping
     public UserDto createUser(@RequestBody UserDto userDto) {
         log.info("Получен запрос на добавление пользователя");
-        return userService.getCreateUser(userDto);
+        return userService.create(userDto);
     }
 
     @PatchMapping("/{userId}")
@@ -46,7 +46,7 @@ public class UserController {
     @DeleteMapping("/{userId}")
     public void deleteUserById(@PathVariable long userId) {
         log.info("Получен запрос на удаление пользователя с id = {}", userId);
-        userService.deleteUserById(userId);
+        userService.delete(userId);
     }
 
 }

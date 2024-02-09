@@ -17,8 +17,7 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ItemDto {
-    private long id;
-    @NotNull
+    private Long id;
     @NotBlank
     private String name;
     @NotBlank
@@ -26,5 +25,7 @@ public class ItemDto {
     @NotNull
     private Boolean available;
     private String request;
-
+    private Boolean lastBooking;
+    private Boolean nextBooking;
+    private String comments;
 }

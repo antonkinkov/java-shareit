@@ -10,6 +10,7 @@ import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
+import javax.persistence.EntityNotFoundException;
 import javax.validation.ValidationException;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,50 +24,55 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public List<UserDto> getAllUsers() {
+    public List<UserDto> getAll() {
         log.info("Список всех пользователей успешно отправлен");
         List<UserDto> users = new ArrayList<>();
 
-        for (User user : userRepository.getAll()) {
+        for (User user : userRepository.findAll()) {
             users.add(UserMapper.toUserDto(user));
         }
-
         return users;
     }
 
     @Override
-    public UserDto getUserById(long userId) {
-        validateFoundForUser(userId);
-        return UserMapper.toUserDto(userRepository.getUserById(userId));
+    public UserDto getById(long userId) {
+        log.info("Получение пользователя по id: {}", userId);
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("Пользователь с таким id не найден: " + userId));
+        return UserMapper.toUserDto(user);
     }
 
     @Override
-    public UserDto getCreateUser(UserDto userDto) {
-        validateByUser(userDto);
-        return UserMapper.toUserDto(userRepository.getCreateUser(UserMapper.toUser(userDto)));
-    }
-
-    @Override
-    public UserDto updateUser(long userId, UserDto userDto) {
-        validateFoundForUser(userId);
-        User user = userRepository.getUserById(userId);
-
-        if (Objects.nonNull(userDto.getEmail()) && !user.getEmail().equals(userDto.getEmail())) {
-            validateEmailUniq(userDto.getEmail());
+    public UserDto create(UserDto userDto) {
+        if (userDto.getEmail() == null || userDto.getEmail().isBlank()) {
+            log.info("Отсутствует поле email у пользователя = {}", userDto.getName());
+            throw new ValidationException("Отсутствует поле email у пользователя");
         }
+        return UserMapper.toUserDto(userRepository.save(UserMapper.toUser(userDto)));
+    }
+
+    @Override
+    public UserDto updateUser(long userId,UserDto userDto) {
+        User user = userRepository.findById(userDto.getId())
+                .orElseThrow(() -> new EntityNotFoundException("Пользователь с таким id не найден: " + userDto.getId()));
 
         user.setName(Objects.requireNonNullElse(userDto.getName(), user.getName()));
         user.setEmail(Objects.requireNonNullElse(userDto.getEmail(), user.getEmail()));
 
-        user.setId(userId);
-        return UserMapper.toUserDto(userRepository.updateUser(userId, user));
+        userRepository.save(user);
+        return UserMapper.toUserDto(user);
     }
 
     @Override
-    public boolean deleteUserById(long userId) {
-        validateFoundForUser(userId);
-        return userRepository.deleteUserById(userId);
+    public void delete(long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("Пользователь с таким id не найден: " + userId));
+        log.info("Удаление пользователя по id: {}", userId);
+        userRepository.deleteById(user.getId());
     }
+
+    /*
+                ОТ ВЕТКИ CONTROLLERS ->
 
     private void validateByUser(UserDto userDto) {
         if (userDto.getName().isBlank() || userDto.getName() == null) {
@@ -85,16 +91,17 @@ public class UserServiceImpl implements UserService {
     }
 
     private void validateFoundForUser(long userId) {
-        if (userRepository.getUserById(userId) == null) {
+        if (userRepository.getById(userId) == null) {
             log.info("Пользователь с id = {} не найден", userId);
             throw new NotFoundException("Пользователь не найден");
         }
     }
 
     private void validateEmailUniq(String email) {
-        if (!userRepository.validateEmailUniq(email)) {
+        if (!userRepository.deleteAllById(email)) {
             log.info("Пользователь с таким email = {} уже существует", email);
             throw new ErrorException("Пользователь с таким email уже существует");
         }
     }
+     */
 }

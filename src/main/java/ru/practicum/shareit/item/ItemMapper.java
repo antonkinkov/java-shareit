@@ -28,4 +28,17 @@ public class ItemMapper {
                 .request(itemDto.getRequest())
                 .build();
     }
+
+    public static ItemDto toBookingDto (Item item) {
+        return ItemDto
+                .builder()
+                .id(item.getId())
+                .name(item.getName())
+                .description(item.getDescription())
+                .available(item.getAvailable())
+                .lastBooking(null)
+                .nextBooking(null)
+                .comments(null)
+                .build();
+    }
 }
