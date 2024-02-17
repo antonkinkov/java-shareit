@@ -25,10 +25,11 @@ public class Comment {
     private String text;
 
     @ManyToOne
-    @JoinColumn(name = "item_id")
+    @JoinColumn(name = "item_id", referencedColumnName = "id", nullable = false)
     private Item item;
 
-    @Column(name = "author_id")
+    @ManyToOne
+    @JoinColumn(name = "author_id", referencedColumnName = "id", nullable = false)
     private User author;
 
     @Column(name = "created_time")

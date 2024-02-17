@@ -3,6 +3,7 @@ package ru.practicum.shareit.user.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.exception.BadRequestException;
 import ru.practicum.shareit.exception.ErrorException;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.user.UserMapper;
@@ -11,6 +12,7 @@ import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
 import javax.persistence.EntityNotFoundException;
+import javax.transaction.Transactional;
 import javax.validation.ValidationException;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,8 +22,8 @@ import java.util.Objects;
 @Slf4j
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
-    private final UserRepository userRepository;
 
+    private final UserRepository userRepository;
 
     @Override
     public List<UserDto> getAll() {
@@ -38,23 +40,23 @@ public class UserServiceImpl implements UserService {
     public UserDto getById(long userId) {
         log.info("Получение пользователя по id: {}", userId);
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException("Пользователь с таким id не найден: " + userId));
+                .orElseThrow(() -> new NotFoundException("Пользователь с таким id не найден: " + userId));
+
         return UserMapper.toUserDto(user);
     }
 
     @Override
+    @Transactional
     public UserDto create(UserDto userDto) {
-        if (userDto.getEmail() == null || userDto.getEmail().isBlank()) {
-            log.info("Отсутствует поле email у пользователя = {}", userDto.getName());
-            throw new ValidationException("Отсутствует поле email у пользователя");
-        }
-        return UserMapper.toUserDto(userRepository.save(UserMapper.toUser(userDto)));
+        User user = UserMapper.toUser(userDto);
+        return UserMapper.toUserDto(userRepository.save(user));
     }
 
     @Override
-    public UserDto updateUser(long userId,UserDto userDto) {
-        User user = userRepository.findById(userDto.getId())
-                .orElseThrow(() -> new EntityNotFoundException("Пользователь с таким id не найден: " + userDto.getId()));
+    @Transactional
+    public UserDto update(long userId, UserDto userDto) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("Пользователь с таким id не найден: " + userDto.getId()));
 
         user.setName(Objects.requireNonNullElse(userDto.getName(), user.getName()));
         user.setEmail(Objects.requireNonNullElse(userDto.getEmail(), user.getEmail()));
@@ -64,9 +66,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public void delete(long userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException("Пользователь с таким id не найден: " + userId));
+                .orElseThrow(() -> new NotFoundException("Пользователь с таким id не найден: " + userId));
         log.info("Удаление пользователя по id: {}", userId);
         userRepository.deleteById(user.getId());
     }

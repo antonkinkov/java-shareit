@@ -6,14 +6,20 @@ DROP TABLE IF EXISTS requests CASCADE;
 
 CREATE TABLE IF NOT EXISTS users (
     id LONG auto_increment PRIMARY KEY,
-    name varchar(255) NOT NULL,
-    email name varchar(255) NOT NULL
+    name TEXT NOT NULL,
+    email TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS requests (
+    id LONG auto_increment PRIMARY KEY,
+    description TEXT NOT NULL,
+    requestor_id LONG REFERENCES users(id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS items (
     id LONG auto_increment PRIMARY KEY,
-    name varchar(255) NOT NULL,
-    description varchar(255) NOT NULL,
+    name TEXT NOT NULL,
+    description TEXT NOT NULL,
     is_available boolean NOT NULL,
     owner_id BIGINT REFERENCES users(id) ON DELETE RESTRICT,
     request_id BIGINT  REFERENCES requests(id) ON DELETE CASCADE
@@ -34,10 +40,4 @@ CREATE TABLE IF NOT EXISTS comments (
     item_id BIGINT REFERENCES items(id) ON DELETE RESTRICT,
     author_id BIGINT REFERENCES users(id) ON DELETE RESTRICT,
     created_time timestamp WITHOUT TIME ZONE
-);
-
-CREATE TABLE IF NOT EXISTS requests (
-    id LONG auto_increment PRIMARY KEY,
-    description varchar(255) NOT NULL,
-    requestor_id LONG REFERENCES users(id) ON DELETE CASCADE
 );

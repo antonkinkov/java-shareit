@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.service.UserService;
 
+import javax.validation.Valid;
 import java.util.List;
 
 /**
@@ -32,7 +33,7 @@ public class UserController {
     }
 
     @PostMapping
-    public UserDto createUser(@RequestBody UserDto userDto) {
+    public UserDto createUser(@Valid @RequestBody UserDto userDto) {
         log.info("Получен запрос на добавление пользователя");
         return userService.create(userDto);
     }
@@ -40,7 +41,7 @@ public class UserController {
     @PatchMapping("/{userId}")
     public UserDto updateUser(@PathVariable Long userId, @RequestBody UserDto userDto) {
         log.info("Получен запрос на обновление пользователя с id = {}", userId);
-        return userService.updateUser(userId, userDto);
+        return userService.update(userId, userDto);
     }
 
     @DeleteMapping("/{userId}")

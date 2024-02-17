@@ -24,8 +24,8 @@ public class BookingController {
     private final String header = "X-Sharer-User-Id";
 
     @PostMapping
-    public BookingDto createBooking(@RequestBody @Valid BookingShortDto bookingDto,
-                                    @RequestHeader(header) Long userId) {
+    public BookingDto create(@RequestBody @Valid BookingShortDto bookingDto,
+                             @RequestHeader(header) Long userId) {
         log.info("Получен запрос на добавление отзыва от пользователя с id = {}", userId);
         return bookingService.create(bookingDto, userId);
     }
@@ -35,7 +35,7 @@ public class BookingController {
                                     @RequestHeader(header) Long userId,
                                     @RequestParam Boolean approved) {
         log.info("Получен запрос на обновление статуса бронирования id " + bookingId + ", пользователем id: " + userId);
-        return bookingService.updateBooking(bookingId, userId, approved);
+        return bookingService.update(bookingId, userId, approved);
     }
 
     @GetMapping("/{bookingId}")
@@ -54,12 +54,12 @@ public class BookingController {
         return bookingService.getAllByUser(userId, state);
     }
 
-//    @GetMapping("/owner")
-//    public  List<BookingDto> getAllByOwner(@RequestHeader("X-Sharer-User-Id") Long userId,
-//                                           @RequestParam(name = "state",
-//                                                   required = false,
-//                                                   defaultValue = "ALL") BookingState state) {
-//        log.info("Получение списка всех бронирований текущего владельца id = {}", userId);
-//        return bookingService.getAllByOwner(userId, state);
-//    }
+    @GetMapping("/owner")
+    public  List<BookingDto> getAllByOwner(@RequestHeader("X-Sharer-User-Id") Long userId,
+                                           @RequestParam(name = "state",
+                                                   required = false,
+                                                   defaultValue = "ALL") BookingState state) {
+        log.info("Получение списка всех бронирований текущего владельца id = {}", userId);
+        return bookingService.getAllByOwner(userId, state);
+    }
 }
