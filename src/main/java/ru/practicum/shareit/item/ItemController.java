@@ -3,17 +3,19 @@ package ru.practicum.shareit.item;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.service.ItemService;
 
+import javax.validation.Valid;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
  * TODO Sprint add-controllers.
  */
-@RestController
 @Slf4j
+@RestController
 @RequestMapping("/items")
 @RequiredArgsConstructor
 public class ItemController {
@@ -48,8 +50,17 @@ public class ItemController {
     }
 
     @GetMapping("/search")
-    public List<Item> search(@RequestParam String text) {
-        log.info("Получен запрос на поиск вещи в аренду для пользователя с id = {}");
+    public List<ItemDto> search(@RequestParam String text, @RequestHeader("X-Sharer-User-Id") Long userId) {
+        log.info("Получен запрос на поиск вещи в аренду для пользователя с id = {}", userId);
         return itemService.search(text);
+    }
+
+    @PostMapping("{itemId}/comment")
+    public CommentDto createComment(@Valid @RequestBody CommentDto commentDto,
+                                    @PathVariable Long itemId,
+                                    @RequestHeader("X-Sharer-User-Id") Long userId) {
+        log.info("Получен запрос на добавление отзыва от пользователя с id = {}", userId);
+        commentDto.setCreated(LocalDateTime.now());
+        return itemService.createComment(userId, itemId, commentDto);
     }
 }

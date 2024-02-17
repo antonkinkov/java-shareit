@@ -1,7 +1,7 @@
-drop TABLE IF EXISTS users CASCADE;
-drop TABLE IF EXISTS items CASCADE;
-drop TABLE IF EXISTS bookings CASCADE;
-drop TABLE IF EXISTS comments CASCADE;
+DROP TABLE IF EXISTS users CASCADE;
+DROP TABLE IF EXISTS items CASCADE;
+DROP TABLE IF EXISTS bookings CASCADE;
+DROP TABLE IF EXISTS comments CASCADE;
 DROP TABLE IF EXISTS requests CASCADE;
 
 CREATE TABLE IF NOT EXISTS users (
@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS bookings (
     end_data timestamp WITHOUT TIME ZONE NOT NULL,
     item_id BIGINT REFERENCES items(id) ON DELETE RESTRICT,
     booker_id BIGINT REFERENCES users(id) ON DELETE RESTRICT,
-    status boolean varchar(100)
+    status varchar(100)
 );
 
 CREATE TABLE IF NOT EXISTS comments (
