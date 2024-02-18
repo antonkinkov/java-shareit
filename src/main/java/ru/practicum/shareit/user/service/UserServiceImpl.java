@@ -50,7 +50,6 @@ public class UserServiceImpl implements UserService {
         if (userRepository.findByEmail(user.getEmail()) != null) {
             throw new BadRequestException("Пользователь с такой почтой уже существует");
         }
-        
         return UserMapper.toUserDto(userRepository.save(user));
     }
 
