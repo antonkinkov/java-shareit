@@ -120,8 +120,8 @@ public class BookingServiceImpl implements BookingService {
                 bookingDtos.addAll(bookingRepository.findAllByBooker(user, sort));
                 break;
             case CURRENT:
-                bookingDtos.addAll(bookingRepository.findAllByBookerAndStartBeforeAndEndAfter(user,
-                        LocalDateTime.now(), LocalDateTime.now(), sort));
+                bookingDtos.addAll(bookingRepository.findAllByBookerAndStartBeforeAndEndAfterOrderByStartAsc(user,
+                        LocalDateTime.now(), LocalDateTime.now()));
                 break;
             case PAST:
                 bookingDtos.addAll(bookingRepository.findAllByBookerAndEndBefore(user, LocalDateTime.now(), sort));
@@ -154,8 +154,8 @@ public class BookingServiceImpl implements BookingService {
                 bookingDtos.addAll(bookingRepository.findAllByItemOwner(user, sort));
                 break;
             case CURRENT:
-                bookingDtos.addAll(bookingRepository.findAllByItemOwnerAndStartBeforeAndEndAfter(user,
-                        LocalDateTime.now(), LocalDateTime.now(), sort));
+                bookingDtos.addAll(bookingRepository.findAllByItemOwnerAndStartBeforeAndEndAfterOrderByStartAsc(user,
+                        LocalDateTime.now(), LocalDateTime.now()));
                 break;
             case PAST:
                 bookingDtos.addAll(bookingRepository.findAllByItemOwnerAndEndBefore(user, LocalDateTime.now(), sort));

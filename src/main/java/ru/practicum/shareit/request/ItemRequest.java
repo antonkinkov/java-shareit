@@ -1,6 +1,5 @@
 package ru.practicum.shareit.request;
 
-import com.sun.istack.NotNull;
 import lombok.*;
 import ru.practicum.shareit.user.model.User;
 

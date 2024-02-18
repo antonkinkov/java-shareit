@@ -21,20 +21,23 @@ import java.util.List;
 public class ItemController {
     private final ItemService itemService;
 
+    private final static String header = "X-Sharer-User-Id";
+
     @GetMapping("/{itemId}")
-    public ItemDto getById(@PathVariable Long itemId) {
+    public ItemDto getById(@PathVariable Long itemId,
+                           @RequestHeader(header) Long userId) {
         log.info("Получен запрос на поиск вещи с id = {}", itemId);
-        return itemService.getById(itemId);
+        return itemService.getById(itemId, userId);
     }
 
     @GetMapping
-    public List<ItemDto> getAll(@RequestHeader("X-Sharer-User-Id") Long userId) {
+    public List<ItemDto> getAll(@RequestHeader(header) Long userId) {
         log.info("Получен запрос на получение списка вещей владельца с id = {}", userId);
         return itemService.getAll(userId);
     }
 
     @PostMapping()
-    public ItemDto create(@RequestHeader("X-Sharer-User-Id") Long userId,
+    public ItemDto create(@RequestHeader(header) Long userId,
                           @RequestBody ItemDto itemDto) {
         log.info("Получен запрос на добавление вещи для пользователя с id = {}", userId);
         return itemService.create(userId, itemDto);
@@ -42,7 +45,7 @@ public class ItemController {
 
 
     @PatchMapping("/{itemId}")
-    public ItemDto update(@RequestHeader("X-Sharer-User-Id") Long userId,
+    public ItemDto update(@RequestHeader(header) Long userId,
                           @RequestBody ItemDto itemDto,
                           @PathVariable Long itemId) {
         log.info("Получен запрос на получение обновления вещи с id = {}", itemId);
@@ -50,7 +53,8 @@ public class ItemController {
     }
 
     @GetMapping("/search")
-    public List<ItemDto> search(@RequestParam String text, @RequestHeader("X-Sharer-User-Id") Long userId) {
+    public List<ItemDto> search(@RequestParam String text,
+                                @RequestHeader(header) Long userId) {
         log.info("Получен запрос на поиск вещи в аренду для пользователя с id = {}", userId);
         return itemService.search(text);
     }
