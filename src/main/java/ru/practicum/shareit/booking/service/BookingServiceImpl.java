@@ -78,14 +78,14 @@ public class BookingServiceImpl implements BookingService {
     public BookingDto update(Long bookingId, Long userId, Boolean approved) {
 
         Booking booking = bookingRepository.findById(bookingId)
-                .orElseThrow(()-> new NotFoundException("Бронирование не найдено, id: " + bookingId));
+                .orElseThrow(() -> new NotFoundException("Бронирование не найдено, id: " + bookingId));
 
-        if(!userId.equals(booking.getItem().getOwner().getId())){
+        if (!userId.equals(booking.getItem().getOwner().getId())) {
             throw new NotFoundException("Бронирование не подтверждено: у пользователя с id " + userId +
                     " не найдено бронирование с id " + bookingId);
         }
 
-        if(!booking.getStatus().equals(BookingStatus.WAITING)){
+        if (!booking.getStatus().equals(BookingStatus.WAITING)) {
             throw new BadRequestException("Бронирование уже подтверждено или отлонено");
         }
 
@@ -97,9 +97,9 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public BookingDto getById(Long bookingId, Long userId) {
         Booking booking = bookingRepository.findById(bookingId)
-                .orElseThrow(()-> new NotFoundException("Бронирование не найдено, id: " + bookingId));
+                .orElseThrow(() -> new NotFoundException("Бронирование не найдено, id: " + bookingId));
 
-        if(!userId.equals(booking.getBooker().getId()) && !userId.equals(booking.getItem().getOwner().getId())){
+        if (!userId.equals(booking.getBooker().getId()) && !userId.equals(booking.getItem().getOwner().getId())) {
             throw new NotFoundException("Информацию о бронировании может смотреть только " +
                     "автор бронирования или хозяин вещи");
         }

@@ -11,9 +11,11 @@ import ru.practicum.shareit.user.model.User;
 import javax.validation.constraints.Future;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+
 /**
  * TODO Sprint add-bookings.
  */
+
 @Data
 @Builder
 @NoArgsConstructor
