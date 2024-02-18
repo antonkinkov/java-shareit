@@ -33,7 +33,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto getById(long userId) {
+    public UserDto getById(Long userId) {
         log.info("Получение пользователя по id: {}", userId);
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("Пользователь с таким id не найден: " + userId));
@@ -50,7 +50,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public UserDto update(long userId, UserDto userDto) {
+    public UserDto update(Long userId, UserDto userDto) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("Пользователь с таким id не найден: " + userDto.getId()));
 
@@ -63,44 +63,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void delete(long userId) {
+    public void delete(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("Пользователь с таким id не найден: " + userId));
         log.info("Удаление пользователя по id: {}", userId);
         userRepository.deleteById(user.getId());
     }
 
-    /*
-                ОТ ВЕТКИ CONTROLLERS ->
-
-    private void validateByUser(UserDto userDto) {
-        if (userDto.getName().isBlank() || userDto.getName() == null) {
-            log.info("Отсутствует поле name у пользователя = {}", userDto.getName());
-            throw new ValidationException("Отсутствует поле name у пользователя");
-        }
-        if (userDto.getEmail() == null || userDto.getEmail().isBlank()) {
-            log.info("Отсутствует поле email у пользователя = {}", userDto.getName());
-            throw new ValidationException("Отсутствует поле email у пользователя");
-        }
-        if (userDto.getEmail().isBlank() || !userDto.getEmail().contains("@")) {
-            log.info("Пользователь неверно ввел email = {}", userDto.getEmail());
-            throw new ValidationException("Неверный формат email");
-        }
-        validateEmailUniq(userDto.getEmail());
-    }
-
-    private void validateFoundForUser(long userId) {
-        if (userRepository.getById(userId) == null) {
-            log.info("Пользователь с id = {} не найден", userId);
-            throw new NotFoundException("Пользователь не найден");
-        }
-    }
-
-    private void validateEmailUniq(String email) {
-        if (!userRepository.deleteAllById(email)) {
-            log.info("Пользователь с таким email = {} уже существует", email);
-            throw new ErrorException("Пользователь с таким email уже существует");
-        }
-    }
-     */
 }
