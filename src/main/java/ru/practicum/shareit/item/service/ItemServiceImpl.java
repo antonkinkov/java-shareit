@@ -70,7 +70,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public List<ItemDto> getAll(Long userId) {
 
-        List<Item> items = itemRepository.findAllByOwnerId(userId);
+        List<Item> items = itemRepository.findAllByOwnerIdOrderByIdAsc(userId);
         List<ItemDto> itemDtos = items.stream().map(ItemMapper::toItemDto).collect(Collectors.toList());
         List<Long> itemIds = itemDtos.stream().map(ItemDto::getId).collect(Collectors.toList());
 

@@ -28,6 +28,14 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler({ConflictException.class})
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    protected ResponseEntity<Object> handleConflictEx(ConflictException ex) {
+        ApiError error = new ApiError("Данные конфликтуют", ex.getMessage());
+        logger.debug(ex.getMessage());
+        return new ResponseEntity<>(error, HttpStatus.CONFLICT);
+    }
+
     @ExceptionHandler
     protected ResponseEntity<Object> handleValidationEx(ValidationException ex) {
         ApiError error = new ApiError("Объект не прошел валидацию", ex.getMessage());
