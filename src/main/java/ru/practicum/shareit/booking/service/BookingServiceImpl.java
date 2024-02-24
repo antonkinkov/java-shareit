@@ -86,7 +86,7 @@ public class BookingServiceImpl implements BookingService {
         }
 
         if (!booking.getStatus().equals(BookingStatus.WAITING)) {
-            throw new BadRequestException("Бронирование уже подтверждено или отлонено");
+            throw new BadRequestException("Бронирование уже подтверждено или отклонено");
         }
 
         booking.setStatus(Boolean.TRUE.equals(approved) ? BookingStatus.APPROVED : BookingStatus.REJECTED);

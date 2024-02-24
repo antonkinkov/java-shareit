@@ -25,7 +25,7 @@ public class BookingController {
 
     @PostMapping
     public BookingDto create(@RequestBody @Valid BookingShortDto bookingDto,
-                             @RequestHeader(header) Long userId) {
+                                             @RequestHeader(header) Long userId) {
         log.info("Получен запрос на добавление отзыва от пользователя с id = {}", userId);
         return bookingService.create(bookingDto, userId);
     }
