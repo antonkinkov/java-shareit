@@ -29,7 +29,7 @@ public class BookingDto {
     @Future
     private LocalDateTime end;
 
-    private Item item; //?
+    private Item item;
     private User booker;
 
     private BookingStatus status;
