@@ -6,8 +6,9 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
@@ -16,33 +17,34 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Slf4j
-@ControllerAdvice
+@RestControllerAdvice
 public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler({EntityNotFoundException.class})
-    protected ResponseEntity<Object> handleRuntimeEx(EntityNotFoundException ex, WebRequest request) {
-        ApiError error = new ApiError("Объект не найден", ex.getMessage());
-        logger.debug(ex.getMessage());
-        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
-    }
-
     @ExceptionHandler({NotFoundException.class})
-    protected ResponseEntity<Object> handleNotFoundEx(NotFoundException ex, WebRequest request) {
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    protected ResponseEntity<Object> handleRuntimeEx(NotFoundException ex) {
         ApiError error = new ApiError("Объект не найден", ex.getMessage());
         logger.debug(ex.getMessage());
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler({ValidationException.class})
-    protected ResponseEntity<Object> handleValidationEx(ValidationException ex, WebRequest request) {
+    @ExceptionHandler({ConflictException.class})
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    protected ResponseEntity<Object> handleConflictEx(ConflictException ex) {
+        ApiError error = new ApiError("Данные конфликтуют", ex.getMessage());
+        logger.debug(ex.getMessage());
+        return new ResponseEntity<>(error, HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler
+    protected ResponseEntity<Object> handleValidationEx(ValidationException ex) {
         ApiError error = new ApiError("Объект не прошел валидацию", ex.getMessage());
         logger.debug(ex.getMessage());
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler({BadRequestException.class})
-    protected ResponseEntity<Object> handleBadRequestExceptionEx(BadRequestException ex,
-                                                                 WebRequest request) {
+    @ExceptionHandler
+    protected ResponseEntity<Object> handleBadRequestExceptionEx(BadRequestException ex) {
         ApiError error = new ApiError("Неверный запрос", ex.getMessage());
         logger.debug(ex.getMessage());
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
