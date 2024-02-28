@@ -43,7 +43,8 @@ public class ItemServiceImpl implements ItemService {
     @Override
     @Transactional(readOnly = true)
     public ItemDto getById(Long itemId, Long userId) {
-        Item item = validateFoundForItem(itemId);
+        Item item = itemRepository.findById(itemId)
+                .orElseThrow(() -> new NotFoundException("Вещь с таким id не найдена: " + itemId));
         ItemDto itemDto = ItemMapper.toItemDto(item);
         itemDto.setComments(commentRepository.findAllByItemId(itemId).stream()
                 .map(CommentMapper::toCommentDto).collect(Collectors.toList()));
@@ -99,7 +100,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public ItemDto create(Long userId, ItemDto itemDto) {
+    public ItemDto create(ItemDto itemDto, Long userId) {
 
         validateByItem(itemDto);
         User user = userRepository.findById(userId)
@@ -108,8 +109,9 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public ItemDto updateItem(Long itemId, ItemDto itemDto, Long userId) {
-        Item item = validateFoundForItem(itemId);
+    public ItemDto update(Long itemId, ItemDto itemDto, Long userId) {
+        Item item = itemRepository.findById(itemId)
+                .orElseThrow(() -> new NotFoundException("Вещь с таким id не найдена: " + itemId));
 
         if (!item.getOwner().getId().equals(userId)) {
             throw new NotFoundException("Невозможно обновить вещь");
@@ -149,12 +151,6 @@ public class ItemServiceImpl implements ItemService {
             throw new ValidationException("Отсутствует поле available");
         }
     }
-
-    private Item validateFoundForItem(long itemId) {
-        return itemRepository.findById(itemId)
-                .orElseThrow(() -> new NotFoundException("Вещь с таким id не найдена: " + itemId));
-    }
-
 
     @Override
     public CommentDto createComment(Long userId, Long itemId, CommentDto commentDto) {
