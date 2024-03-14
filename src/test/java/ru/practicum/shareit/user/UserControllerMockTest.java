@@ -2,6 +2,7 @@ package ru.practicum.shareit.user;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -9,26 +10,24 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.service.UserService;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.mockito.Mockito.*;
 
 
 @WebMvcTest(controllers = UserController.class)
-public class UserControllerTest {
+public class UserControllerMockTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -39,15 +38,20 @@ public class UserControllerTest {
     @MockBean
     private UserService userService;
 
-    private final UserDto userDto = UserDto.builder()
-            .id(1L)
-            .name("name")
-            .email("email@email.com")
-            .build();
+    private UserDto userDto;
+
+    @BeforeEach
+    void init() {
+        userDto = UserDto.builder()
+                .id(1L)
+                .name("name")
+                .email("email@email.com")
+                .build();
+    }
 
     @Test
     @SneakyThrows
-    public void getAll() {
+    public void getAllTest() {
 
         when(userService.getAll()).thenReturn(List.of(userDto));
 
@@ -61,7 +65,7 @@ public class UserControllerTest {
 
     @Test
     @SneakyThrows
-    public void getById() {
+    public void getByIdTest() {
         when(userService.getById(1L)).thenReturn(userDto);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/users/1"))
@@ -73,24 +77,23 @@ public class UserControllerTest {
 
     @SneakyThrows
     @Test
-    void createUser() {
-        UserDto userToCreate = new UserDto();
-        when(userService.create(userToCreate)).thenReturn(userToCreate);
+    void createUserTest() {
+        when(userService.create(any(UserDto.class))).thenReturn(userDto);
 
-        String result = mockMvc.perform(post("/users")
+        String result = mockMvc.perform(MockMvcRequestBuilders.post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(userToCreate)))
+                        .content(objectMapper.writeValueAsString(userDto)))
                 .andExpect(status().isOk())
                 .andReturn()
                 .getResponse()
                 .getContentAsString();
 
-        assertEquals(objectMapper.writeValueAsString(userToCreate), result);
+        assertEquals(objectMapper.writeValueAsString(userDto), result);
     }
 
     @Test
     @SneakyThrows
-    public void updateUser() {
+    public void updateTest() {
         UserDto userDtoToUpdate = UserDto.builder()
                 .name("updateName")
                 .email("udate@email.com")
@@ -117,9 +120,9 @@ public class UserControllerTest {
 
     @SneakyThrows
     @Test
-    void deleteUser() {
+    void deleteTest() {
         long userId = 0L;
-        mockMvc.perform(delete("/users/{userId}", userId))
+        mockMvc.perform(MockMvcRequestBuilders.delete("/users/{userId}", userId))
                 .andExpect(status().isOk());
 
         verify(userService, times(1)).delete(userId);

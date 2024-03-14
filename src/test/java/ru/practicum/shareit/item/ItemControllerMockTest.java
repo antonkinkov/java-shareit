@@ -2,16 +2,17 @@ package ru.practicum.shareit.item;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.CommentDto;
+import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.service.ItemService;
 
 import java.nio.charset.StandardCharsets;
@@ -20,15 +21,16 @@ import java.util.List;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
 @WebMvcTest(controllers = ItemController.class)
-public class ItemControllerTest {
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+public class ItemControllerMockTest {
     @Autowired
     private MockMvc mockMvc;
     @Autowired
@@ -36,10 +38,25 @@ public class ItemControllerTest {
     @MockBean
     private ItemService itemService;
 
+    private CommentDto commentDto;
+
+    @BeforeEach
+    void init() {
+
+        commentDto = CommentDto.builder()
+                .id(1L)
+                .text("text")
+                .build();
+    }
+
     @SneakyThrows
     @Test
-    void createItem() {
-        ItemDto itemToCreate = new ItemDto();
+    void createTest() {
+        ItemDto itemToCreate = ItemDto.builder()
+                .name("My item")
+                .description("Very interesting item")
+                .available(true)
+                .build();
         when(itemService.create(any(ItemDto.class), anyLong())).thenReturn(itemToCreate);
 
         String result = mockMvc.perform(post("/items")
@@ -57,7 +74,7 @@ public class ItemControllerTest {
 
     @SneakyThrows
     @Test
-    void updateItem() {
+    void updateTest() {
         ItemDto itemDtoToUpdate = ItemDto.builder()
                 .name("updName")
                 .description("updDesc")
@@ -135,10 +152,10 @@ public class ItemControllerTest {
     @SneakyThrows
     @Test
     void searchTest() {
-        mockMvc.perform(MockMvcRequestBuilders.get("/items/search")
-                        .param("text", "text")
-                        .param("from", "1")
-                        .param("size", "1"))
+        mockMvc.perform(MockMvcRequestBuilders.get("/items/search?text='name'")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .header("X-Sharer-User-Id", 1))
                 .andExpect(status().isOk());
 
         verify(itemService, times(1)).search(anyString());
@@ -146,8 +163,7 @@ public class ItemControllerTest {
 
     @SneakyThrows
     @Test
-    void createComment() {
-        CommentDto commentDto = new CommentDto();
+    void createCommentTest() {
         when(itemService.createComment(anyLong(), anyLong(), any(CommentDto.class)))
                 .thenReturn(commentDto);
         mockMvc.perform(post("/items/{itemId}/comment", 1)

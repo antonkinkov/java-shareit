@@ -31,9 +31,9 @@ public class BookingController {
     }
 
     @PatchMapping("/{bookingId}")
-    public BookingDto updateBooking(@PathVariable Long bookingId,
-                                    @RequestHeader(header) Long userId,
-                                    @RequestParam Boolean approved) {
+    public BookingDto update(@PathVariable Long bookingId,
+                             @RequestHeader(header) Long userId,
+                             @RequestParam Boolean approved) {
         log.info("Получен запрос на обновление статуса бронирования id " + bookingId + ", пользователем id: " + userId);
         return bookingService.update(bookingId, userId, approved);
     }
@@ -47,19 +47,23 @@ public class BookingController {
 
     @GetMapping
     public List<BookingDto> getAllByUser(@RequestHeader(header) Long userId,
-                                           @RequestParam(name = "state",
-                                                   required = false,
-                                                   defaultValue = "ALL") BookingState state) {
+                                         @RequestParam(name = "state",
+                                                 required = false,
+                                                 defaultValue = "ALL") BookingState state,
+                                         @RequestParam(name = "from", defaultValue = "0") int from,
+                                         @RequestParam(name = "size", defaultValue = "10") int size) {
         log.info("Получение списка всех бронирований текущего пользователяс id = {}", userId);
-        return bookingService.getAllByUser(userId, state);
+        return bookingService.getAllByUser(userId, state, from, size);
     }
 
     @GetMapping("/owner")
-    public  List<BookingDto> getAllByOwner(@RequestHeader("X-Sharer-User-Id") Long userId,
-                                           @RequestParam(name = "state",
-                                                   required = false,
-                                                   defaultValue = "ALL") BookingState state) {
+    public List<BookingDto> getAllByOwner(@RequestHeader("X-Sharer-User-Id") Long userId,
+                                          @RequestParam(name = "state",
+                                                  required = false,
+                                                  defaultValue = "ALL") BookingState state,
+                                          @RequestParam(name = "from", defaultValue = "0") int from,
+                                          @RequestParam(name = "size", defaultValue = "10") int size) {
         log.info("Получение списка всех бронирований текущего владельца id = {}", userId);
-        return bookingService.getAllByOwner(userId, state);
+        return bookingService.getAllByOwner(userId, state, from, size);
     }
 }

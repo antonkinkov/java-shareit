@@ -39,7 +39,7 @@ public class ItemController {
 
     @PostMapping()
     public ItemDto create(@RequestHeader(header) Long userId,
-                          @RequestBody ItemDto itemDto) {
+                          @RequestBody @Valid ItemDto itemDto) {
         log.info("Получен запрос на добавление вещи для пользователя с id = {}", userId);
         return itemService.create(itemDto, userId);
     }
