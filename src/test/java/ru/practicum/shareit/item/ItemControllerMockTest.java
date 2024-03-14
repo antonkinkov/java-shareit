@@ -11,6 +11,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import ru.practicum.shareit.exception.BadRequestException;
+import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.service.ItemService;
@@ -177,4 +179,41 @@ public class ItemControllerMockTest {
                 .andExpect(jsonPath("$.text").value(commentDto.getText()))
                 .andExpect(jsonPath("$.authorName").value(commentDto.getAuthorName()));
     }
+
+
+    @SneakyThrows
+    @Test
+    void createNotFoundExceptionTest() {
+        ItemDto itemToCreate = ItemDto.builder()
+                .name("My item")
+                .description("Very interesting item")
+                .available(true)
+                .build();
+        when(itemService.create(any(ItemDto.class), anyLong())).thenThrow(new NotFoundException("Объект не найден"));
+
+        mockMvc.perform(post("/items")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .header("X-Sharer-User-Id", "1")
+                        .content(objectMapper.writeValueAsString(itemToCreate)))
+                .andExpect(status().isNotFound());
+    }
+
+    @SneakyThrows
+    @Test
+    void createBadRequestExceptionTest() {
+        ItemDto itemToCreate = ItemDto.builder()
+                .name("My item")
+                .available(true)
+                .build();
+        when(itemService.create(any(ItemDto.class), anyLong())).thenThrow(new BadRequestException("Некорректный запрос"));
+
+        mockMvc.perform(post("/items")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .header("X-Sharer-User-Id", "1")
+                        .content(objectMapper.writeValueAsString(itemToCreate)))
+                .andExpect(status().isBadRequest());
+    }
+
 }
