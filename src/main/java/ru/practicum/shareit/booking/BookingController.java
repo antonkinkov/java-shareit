@@ -11,9 +11,6 @@ import ru.practicum.shareit.booking.service.BookingService;
 import javax.validation.Valid;
 import java.util.List;
 
-/**
- * TODO Sprint add-bookings.
- */
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -50,8 +47,8 @@ public class BookingController {
                                          @RequestParam(name = "state",
                                                  required = false,
                                                  defaultValue = "ALL") BookingState state,
-                                         @RequestParam(name = "from", defaultValue = "0") int from,
-                                         @RequestParam(name = "size", defaultValue = "10") int size) {
+                                         @RequestParam(name = "from", defaultValue = "0") Integer from,
+                                         @RequestParam(name = "size", defaultValue = "10") Integer size) {
         log.info("Получение списка всех бронирований текущего пользователяс id = {}", userId);
         return bookingService.getAllByUser(userId, state, from, size);
     }
@@ -61,8 +58,8 @@ public class BookingController {
                                           @RequestParam(name = "state",
                                                   required = false,
                                                   defaultValue = "ALL") BookingState state,
-                                          @RequestParam(name = "from", defaultValue = "0") int from,
-                                          @RequestParam(name = "size", defaultValue = "10") int size) {
+                                          @RequestParam(name = "from", defaultValue = "0") Integer from,
+                                          @RequestParam(name = "size", defaultValue = "10") Integer size) {
         log.info("Получение списка всех бронирований текущего владельца id = {}", userId);
         return bookingService.getAllByOwner(userId, state, from, size);
     }

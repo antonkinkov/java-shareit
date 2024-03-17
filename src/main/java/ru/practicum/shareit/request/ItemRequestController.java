@@ -11,9 +11,6 @@ import javax.validation.Valid;
 import java.util.List;
 
 
-/**
- * TODO Sprint add-item-requests.
- */
 @Slf4j
 @Validated
 @RestController
