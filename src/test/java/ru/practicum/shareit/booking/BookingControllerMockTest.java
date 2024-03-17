@@ -72,7 +72,7 @@ public class BookingControllerMockTest {
                 .start(startDate)
                 .end(endDate)
                 .booker(UserMapper.toUser(secondUserDto))
-                .item(ItemMapper.toItem(itemDto, UserMapper.toUser(firstUserDto)))
+                .item(itemDto)
                 .build();
 
         bookingShortDto = BookingShortDto.builder()
