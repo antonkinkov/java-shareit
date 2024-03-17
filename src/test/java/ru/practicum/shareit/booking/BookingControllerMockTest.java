@@ -43,6 +43,7 @@ public class BookingControllerMockTest {
     private UserDto firstUserDto;
     private UserDto secondUserDto;
     private ItemDto itemDto;
+    private UserDto userDto;
     private BookingShortDto bookingShortDto;
 
     @BeforeEach
@@ -70,7 +71,7 @@ public class BookingControllerMockTest {
                 .id(1L)
                 .start(startDate)
                 .end(endDate)
-                .booker(UserMapper.toUser(secondUserDto))
+                .booker(userDto)
                 .item(itemDto)
                 .build();
 

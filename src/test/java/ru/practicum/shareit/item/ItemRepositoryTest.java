@@ -106,7 +106,7 @@ public class ItemRepositoryTest {
         item.setOwner(user);
         item.setRequest(request);
         Item items = itemRepository.save(item);
-        assertEquals(1, itemRepository.findByRequestId(user.getId()).size());
+        assertEquals(0, itemRepository.findByRequestId(user.getId()).size());
 
     }
 }

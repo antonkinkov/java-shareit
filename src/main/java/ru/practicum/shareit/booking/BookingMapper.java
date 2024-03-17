@@ -5,10 +5,10 @@ import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingShortDto;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.item.ItemMapper;
+import ru.practicum.shareit.user.UserMapper;
 
 @UtilityClass
 public class BookingMapper {
-    private ItemMapper itemMapper;
 
     public static BookingDto toBookingDto(Booking booking) {
         return BookingDto
@@ -17,8 +17,8 @@ public class BookingMapper {
                 .start(booking.getStart())
                 .end(booking.getEnd())
                 .status(booking.getStatus())
-                .booker(booking.getBooker())
-                .item(itemMapper.toItemDto(booking.getItem()))
+                .booker(UserMapper.toUserDto(booking.getBooker()))
+                .item(ItemMapper.toItemDto(booking.getItem()))
                 .build();
     }
 
