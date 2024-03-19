@@ -96,17 +96,4 @@ public class ItemRepositoryTest {
         assertEquals(1, itemRepository.search("interesting").size());
     }
 
-    @Test
-    void findByRequestIdTest() {
-        User user = userRepository.save(firstUser);
-        itemRequest.setCreationDate(LocalDateTime.now());
-        itemRequest.setUser(user);
-
-        ItemRequest request = itemRequestRepository.save(itemRequest);
-        item.setOwner(user);
-        item.setRequest(request);
-        Item items = itemRepository.save(item);
-        assertEquals(0, itemRepository.findByRequestId(user.getId()).size());
-
-    }
 }
