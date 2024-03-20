@@ -9,9 +9,6 @@ import ru.practicum.shareit.user.service.UserService;
 import javax.validation.Valid;
 import java.util.List;
 
-/**
- * TODO Sprint add-controllers.
- */
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -21,31 +18,31 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping
-    public List<UserDto> getAllUser() {
+    public List<UserDto> getAll() {
         log.info("Получен запрос на получение всех пользователей");
         return userService.getAll();
     }
 
     @GetMapping("/{userId}")
-    public UserDto getUserById(@PathVariable Long userId) {
+    public UserDto getById(@PathVariable Long userId) {
         log.info("Получен запрос на получение пользователя");
         return userService.getById(userId);
     }
 
     @PostMapping
-    public UserDto createUser(@Valid @RequestBody UserDto userDto) {
+    public UserDto create(@Valid @RequestBody UserDto userDto) {
         log.info("Получен запрос на добавление пользователя");
         return userService.create(userDto);
     }
 
     @PatchMapping("/{userId}")
-    public UserDto updateUser(@PathVariable Long userId, @RequestBody UserDto userDto) {
+    public UserDto update(@PathVariable Long userId, @RequestBody UserDto userDto) {
         log.info("Получен запрос на обновление пользователя с id = {}", userId);
         return userService.update(userId, userDto);
     }
 
     @DeleteMapping("/{userId}")
-    public void deleteUserById(@PathVariable Long userId) {
+    public void deleteById(@PathVariable Long userId) {
         log.info("Получен запрос на удаление пользователя с id = {}", userId);
         userService.delete(userId);
     }

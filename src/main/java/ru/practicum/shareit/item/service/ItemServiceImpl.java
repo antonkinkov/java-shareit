@@ -18,10 +18,11 @@ import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.CommentRepository;
 import ru.practicum.shareit.item.repository.ItemRepository;
+import ru.practicum.shareit.request.model.ItemRequest;
+import ru.practicum.shareit.request.repository.ItemRequestRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
-import javax.validation.ValidationException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,11 +40,46 @@ public class ItemServiceImpl implements ItemService {
     private final UserRepository userRepository;
     private final BookingRepository bookingRepository;
     private final CommentRepository commentRepository;
+    private final ItemRequestRepository itemRequestRepository;
+
+    @Override
+    public ItemDto create(ItemDto itemDto, Long userId) {
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("Не найден пользователь с id: " + userId));
+        Item item = ItemMapper.toItem(itemDto, user);
+
+        if (itemDto.getRequestId() != null) {
+            ItemRequest itemRequest = itemRequestRepository.findById(itemDto.getRequestId())
+                    .orElseThrow(() -> new NotFoundException("Не найден запрос с id: " + itemDto.getRequestId()));
+            item.setRequest(itemRequest);
+        }
+
+
+        return toItemDto(itemRepository.save(item));
+    }
+
+    @Override
+    public ItemDto update(Long itemId, ItemDto itemDto, Long userId) {
+        Item item = itemRepository.findById(itemId)
+                .orElseThrow(() -> new NotFoundException("Вещь с таким id не найдена: " + itemId));
+
+        if (!item.getOwner().getId().equals(userId)) {
+            throw new NotFoundException("Невозможно обновить вещь");
+        }
+
+        item.setName(Objects.requireNonNullElse(itemDto.getName(), item.getName()));
+        item.setDescription(Objects.requireNonNullElse(itemDto.getDescription(), item.getDescription()));
+        item.setAvailable(Objects.requireNonNullElse(itemDto.getAvailable(), item.getAvailable()));
+
+        return toItemDto(itemRepository.save(item));
+    }
 
     @Override
     @Transactional(readOnly = true)
     public ItemDto getById(Long itemId, Long userId) {
-        Item item = validateFoundForItem(itemId);
+        Item item = itemRepository.findById(itemId)
+                .orElseThrow(() -> new NotFoundException("Вещь с таким id не найдена: " + itemId));
         ItemDto itemDto = ItemMapper.toItemDto(item);
         itemDto.setComments(commentRepository.findAllByItemId(itemId).stream()
                 .map(CommentMapper::toCommentDto).collect(Collectors.toList()));
@@ -99,30 +135,6 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public ItemDto create(Long userId, ItemDto itemDto) {
-
-        validateByItem(itemDto);
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("Не найден пользователь с id: " + userId));
-        return toItemDto(itemRepository.save(ItemMapper.toItem(itemDto, user)));
-    }
-
-    @Override
-    public ItemDto updateItem(Long itemId, ItemDto itemDto, Long userId) {
-        Item item = validateFoundForItem(itemId);
-
-        if (!item.getOwner().getId().equals(userId)) {
-            throw new NotFoundException("Невозможно обновить вещь");
-        }
-
-        item.setName(Objects.requireNonNullElse(itemDto.getName(), item.getName()));
-        item.setDescription(Objects.requireNonNullElse(itemDto.getDescription(), item.getDescription()));
-        item.setAvailable(Objects.requireNonNullElse(itemDto.getAvailable(), item.getAvailable()));
-
-        return toItemDto(itemRepository.save(item));
-    }
-
-    @Override
     public List<ItemDto> search(String text) {
         List<ItemDto> items = new ArrayList<>();
         if (text.isBlank()) {
@@ -133,28 +145,6 @@ public class ItemServiceImpl implements ItemService {
         }
         return items;
     }
-
-
-    private void validateByItem(ItemDto itemDto) {
-        if (itemDto.getName().isBlank() || itemDto.getName() == null) {
-            log.info("Отсутствует поле name");
-            throw new ValidationException("Отсутствует поле name");
-        }
-        if (itemDto.getDescription() == null || itemDto.getDescription().isBlank()) {
-            log.info("Отсутствует поле description");
-            throw new ValidationException("Отсутствует поле description");
-        }
-        if (itemDto.getAvailable() == null) {
-            log.info("Отсутствует поле available");
-            throw new ValidationException("Отсутствует поле available");
-        }
-    }
-
-    private Item validateFoundForItem(long itemId) {
-        return itemRepository.findById(itemId)
-                .orElseThrow(() -> new NotFoundException("Вещь с таким id не найдена: " + itemId));
-    }
-
 
     @Override
     public CommentDto createComment(Long userId, Long itemId, CommentDto commentDto) {

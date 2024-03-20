@@ -11,9 +11,6 @@ import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.List;
 
-/**
- * TODO Sprint add-controllers.
- */
 @Slf4j
 @RestController
 @RequestMapping("/items")
@@ -39,9 +36,9 @@ public class ItemController {
 
     @PostMapping()
     public ItemDto create(@RequestHeader(header) Long userId,
-                          @RequestBody ItemDto itemDto) {
+                          @RequestBody @Valid ItemDto itemDto) {
         log.info("Получен запрос на добавление вещи для пользователя с id = {}", userId);
-        return itemService.create(userId, itemDto);
+        return itemService.create(itemDto, userId);
     }
 
 
@@ -50,7 +47,7 @@ public class ItemController {
                           @RequestBody ItemDto itemDto,
                           @PathVariable Long itemId) {
         log.info("Получен запрос на получение обновления вещи с id = {}", itemId);
-        return itemService.updateItem(itemId, itemDto, userId);
+        return itemService.update(itemId, itemDto, userId);
     }
 
     @GetMapping("/search")
