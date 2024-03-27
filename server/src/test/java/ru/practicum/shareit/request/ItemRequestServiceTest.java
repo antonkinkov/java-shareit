@@ -71,6 +71,17 @@ public class ItemRequestServiceTest {
     }
 
     @Test
+    void getAllTest() {
+        UserDto user = userService.create(userDto);
+        ItemRequestDto requestDto = itemRequestService.create(itemRequestDto, user.getId());
+        assertEquals(0, itemRequestService.getAll(user.getId(), 0, 10).size());
+
+        UserDto user2 = userService.create(userDto.toBuilder().email("useruser@mail.ru").build());
+        assertEquals(1, itemRequestService.getAll(user2.getId(), 0, 10).size());
+
+    }
+
+    @Test
     void getAllWrongTestByUser() {
         assertThrows(NotFoundException.class, () -> itemRequestService.getAll(99, 0, 10));
     }

@@ -117,4 +117,14 @@ public class UserControllerMockTest {
                 .andExpect(jsonPath("$.name", is(userDtoExpected.getName())))
                 .andExpect(jsonPath("$.email", is(userDtoExpected.getEmail())));
     }
+
+    @SneakyThrows
+    @Test
+    void deleteTest() {
+        long userId = 0L;
+        mockMvc.perform(MockMvcRequestBuilders.delete("/users/{userId}", userId))
+                .andExpect(status().isOk());
+
+        verify(userService, times(1)).delete(userId);
+    }
 }

@@ -67,5 +67,12 @@ public class UserServiceTest {
         userService.delete(user.getId());
         assertEquals(0, userService.getAll().size());
     }
+
+    @Test
+    void deleteWrongTest() {
+        UserDto user = userService.create(userDto);
+        assertEquals(1, userService.getAll().size());
+        assertThrows(NotFoundException.class, () -> userService.delete(user.getId() + 99));
+    }
 }
 
