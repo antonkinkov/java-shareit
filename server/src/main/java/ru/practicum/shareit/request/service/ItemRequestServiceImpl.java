@@ -61,6 +61,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     }
 
     @Override
+    @Transactional
     public List<ItemRequestDto> getAll(long userId, int from, int size) {
 
         if (from < 0 || size <= 0) {

@@ -3,6 +3,7 @@ package ru.practicum.shareit.user;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.service.UserService;
@@ -43,9 +44,10 @@ public class UserController {
 
     @DeleteMapping("/{userId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteById(@PathVariable Long userId) {
+    public ResponseEntity<Boolean> deleteById(@PathVariable Long userId) {
         log.info("Получен запрос на удаление пользователя с id = {}", userId);
         userService.delete(userId);
+        return ResponseEntity.ok(true);
     }
 
 }

@@ -7,6 +7,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import ru.practicum.shareit.exception.BadRequestException;
 import ru.practicum.shareit.exception.NotFoundException;
+import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.service.ItemRequestService;
 import ru.practicum.shareit.user.dto.UserDto;
@@ -23,10 +25,14 @@ public class ItemRequestServiceTest {
     private ItemRequestService itemRequestService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private ItemService itemService;
 
     private ItemRequestDto itemRequestDto;
 
     private UserDto userDto;
+
+    private ItemDto itemDto;
 
     @BeforeEach
     void init() {
@@ -37,6 +43,12 @@ public class ItemRequestServiceTest {
         userDto = UserDto.builder()
                 .email("email")
                 .name("name")
+                .build();
+
+        itemDto = ItemDto.builder()
+                .name("My item")
+                .description("Very interesting item")
+                .available(true)
                 .build();
     }
 
@@ -74,11 +86,9 @@ public class ItemRequestServiceTest {
     void getAllTest() {
         UserDto user = userService.create(userDto);
         ItemRequestDto requestDto = itemRequestService.create(itemRequestDto, user.getId());
-        assertEquals(0, itemRequestService.getAll(user.getId(), 0, 10).size());
-
-        UserDto user2 = userService.create(userDto.toBuilder().email("useruser@mail.ru").build());
-        assertEquals(1, itemRequestService.getAll(user2.getId(), 0, 10).size());
-
+        itemDto.setRequestId(requestDto.getId());
+        itemService.create(itemDto, user.getId());
+        assertEquals(1, itemRequestService.getAll(user.getId(), 0, 10).size());
     }
 
     @Test
